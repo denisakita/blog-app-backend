@@ -1,13 +1,25 @@
 import express from 'express';
-import { db, connectToDb } from './db.js';
+import {connectToDb, db} from './db.js';
+
+import * as admin from "firebase-admin";
+import fs from "fs";
+
+const credentials = JSON.parse(
+    fs.readFileSync('../credentials.json')
+);
+admin.initializeApp(
+    {
+        credential: admin.credential.cert(credentials),
+    }
+);
 
 const app = express();
 app.use(express.json());
 
 app.get('/api/articles/:name', async (req, res) => {
-    const { name } = req.params;
+    const {name} = req.params;
 
-    const article = await db.collection('articles').findOne({ name });
+    const article = await db.collection('articles').findOne({name});
 
     if (article) {
         res.json(article);
@@ -17,12 +29,12 @@ app.get('/api/articles/:name', async (req, res) => {
 });
 
 app.put('/api/articles/:name/upvote', async (req, res) => {
-    const { name } = req.params;
+    const {name} = req.params;
 
-    await db.collection('articles').updateOne({ name }, {
-        $inc: { upvotes: 1 },
+    await db.collection('articles').updateOne({name}, {
+        $inc: {upvotes: 1},
     });
-    const article = await db.collection('articles').findOne({ name });
+    const article = await db.collection('articles').findOne({name});
 
     if (article) {
         // res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
@@ -33,13 +45,13 @@ app.put('/api/articles/:name/upvote', async (req, res) => {
 });
 
 app.post('/api/articles/:name/comments', async (req, res) => {
-    const { name } = req.params;
-    const { postedBy, text } = req.body;
+    const {name} = req.params;
+    const {postedBy, text} = req.body;
 
-    await db.collection('articles').updateOne({ name }, {
-        $push: { comments: { postedBy, text } },
+    await db.collection('articles').updateOne({name}, {
+        $push: {comments: {postedBy, text}},
     });
-    const article = await db.collection('articles').findOne({ name });
+    const article = await db.collection('articles').findOne({name});
 
     if (article) {
         // res.send(article.comments);
