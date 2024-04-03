@@ -66,3 +66,15 @@ for deploying React and Node.js applications to set up your deployment environme
 ---
 
 Happy coding! 🚀
+
+1. **Home Page**:
+
+![Home Image](assets/images/home.png)
+
+2. **Article View**:
+
+![Article Image](assets/images/articles.png)
+
+3. **Article Details**:
+
+![Article Details Image](assets/images/article-details.png)
