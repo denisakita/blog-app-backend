@@ -1,17 +1,14 @@
+import fs from 'fs';
+import admin from 'firebase-admin';
 import express from 'express';
 import {connectToDb, db} from './db.js';
 
-import * as admin from "firebase-admin";
-import fs from "fs";
-
 const credentials = JSON.parse(
-    fs.readFileSync('../credentials.json')
+    fs.readFileSync('./credentials.json')
 );
-admin.initializeApp(
-    {
-        credential: admin.credential.cert(credentials),
-    }
-);
+admin.initializeApp({
+    credential: admin.credential.cert(credentials),
+});
 
 const app = express();
 app.use(express.json());
@@ -31,6 +28,7 @@ app.use(async (req, res, next) => {
 
     next();
 });
+
 app.get('/api/articles/:name', async (req, res) => {
     const {name} = req.params;
     const {uid} = req.user;
@@ -45,6 +43,7 @@ app.get('/api/articles/:name', async (req, res) => {
         res.sendStatus(404);
     }
 });
+
 app.use((req, res, next) => {
     if (req.user) {
         next();
@@ -52,6 +51,7 @@ app.use((req, res, next) => {
         res.sendStatus(401);
     }
 });
+
 app.put('/api/articles/:name/upvote', async (req, res) => {
     const {name} = req.params;
     const {uid} = req.user;
@@ -93,11 +93,9 @@ app.post('/api/articles/:name/comments', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 8000;
-
 connectToDb(() => {
     console.log('Successfully connected to database!');
-    app.listen(PORT, () => {
-        console.log('Server is listening on port ' + PORT);
+    app.listen(8000, () => {
+        console.log('Server is listening on port 8000');
     });
 })
